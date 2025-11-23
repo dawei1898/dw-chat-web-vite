@@ -1,21 +1,21 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 
-type Theme = 'dark' | 'light'
+export type Theme = 'dark' | 'light'
 
-type State = {
+export type ThemeState = {
     theme: Theme;
     dark: boolean;
 }
 
-type Action = {
+export type ThemeAction  = {
     toggleTheme: () => void;
 }
 
 /**
  * 主题配置 全局状态管理
  */
-export const useThemeStore = create<State & Action>()(
+export const useThemeStore = create<ThemeState & ThemeAction>()(
     persist(
         (set) => ({
             theme: 'light',

@@ -42,8 +42,6 @@ export const ThemeProvider = (
         root.classList.add(theme)
     }, [theme])
 
-
-
     const value = {theme, dark, toggleTheme}
 
     return (
