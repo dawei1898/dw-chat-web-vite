@@ -1,3 +1,5 @@
+import {Button} from "antd";
+
 function App() {
 
 
@@ -5,6 +7,10 @@ function App() {
         <div className='flex min-h-svh justify-center items-center gap-4 p-4'>
             <h3>Hello World</h3>
             <p>This is a vite app</p>
+
+            <Button type='primary'>
+                发送
+            </Button>
         </div>
     )
 }
