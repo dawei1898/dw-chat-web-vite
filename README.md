@@ -54,3 +54,7 @@ npm install zustand
 ```shell
 npm install snowflake-uid --save
 ```
+
+```shell
+npm install react-infinite-scroll-component
+```

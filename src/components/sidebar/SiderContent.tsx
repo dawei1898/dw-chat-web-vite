@@ -1,38 +1,32 @@
 import React, {useState} from 'react';
 import {Conversations, type ConversationsProps} from "@ant-design/x";
 import type {GetProp} from "antd";
-import {CodeOutlined, FileImageOutlined, FileSearchOutlined, SignatureOutlined} from "@ant-design/icons";
+import {CodeOutlined, FileImageOutlined, FileSearchOutlined} from "@ant-design/icons";
+import KeyCode from 'rc-util/lib/KeyCode';
 
 
 
 const agentItems: GetProp<ConversationsProps, 'items'> = [
     {
-        key: 'write',
-        label: 'Help Me Write',
-        icon: <SignatureOutlined />,
-    },
-    {
         key: 'coding',
         label: 'AI Coding',
-        icon: <CodeOutlined />,
+        icon: <CodeOutlined/>,
     },
     {
         key: 'createImage',
         label: 'Create Image',
-        icon: <FileImageOutlined />,
+        icon: <FileImageOutlined/>,
     },
     {
         key: 'deepSearch',
         label: 'Deep Search',
-        icon: <FileSearchOutlined />,
+        icon: <FileSearchOutlined/>,
     },
-    {
-        type: 'divider',
-    },
+
 ];
 
 
-const defaultItems: GetProp<ConversationsProps, 'items'> = Array.from({ length: 15 }).map((_, index) => ({
+const defaultItems: GetProp<ConversationsProps, 'items'> = Array.from({length: 15}).map((_, index) => ({
     key: `item${index + 1}`,
     label:
         index === 0
@@ -45,33 +39,54 @@ const SiderContent = () => {
 
     const [historicalItems, setHistoricalItems] = useState<GetProp<ConversationsProps, 'items'>>(defaultItems);
 
-    const items = [...agentItems, ...historicalItems]
+    const newChatClick = () => {
+        setHistoricalItems((ori) => {
+            return [
+                ...ori,
+                {
+                    key: `item${ori.length + 1}`,
+                    label: `Conversation Item ${ori.length + 1}`,
+                    group: 'Today',
+                },
+            ];
+        });
+    };
 
     return (
-        <div className=' px-1 overflow-y-auto scrollbar-container'>
+        <>
             <Conversations
-                creation={{
-                    label: '新会话'
-                }}
-                items={items}
-                defaultActiveKey="item1"
-                groupable
                 styles={{
+                    root: {
+                        height: '300px',
+                        marginBottom: '-40px',
+                    },
                     creation: {
-                        color: 'yellow'
-                    },
-                    item: {
-                        color: 'red',
-
-                    },
-                    group: {
-                        color: 'green',
-                        backgroundColor: 'blue',
-                        overflowY: 'hidden',
+                        borderRadius: '10px',
                     }
                 }}
+                creation={{
+                    align: 'center',
+                    label: '新会话',
+                    onClick: newChatClick,
+                }}
+                items={agentItems}
+                shortcutKeys={{
+                    creation: ['Meta', KeyCode.K],  // 不生效
+                }}
             />
-        </div>
+            <div id="scrollableDiv" className='overflow-scroll scrollbar-container'>
+                <Conversations
+                    style={{marginBottom: '-10px'}}
+                    items={historicalItems}
+                    defaultActiveKey="item1"
+                    groupable
+                    onActiveChange={(value) => {
+                        console.log("active:", value)
+                    }}
+                />
+            </div>
+
+        </>
     );
 };
 
