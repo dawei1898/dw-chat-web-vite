@@ -2,6 +2,7 @@ import {createBrowserRouter, useRouteError} from "react-router";
 import NotFoundPage from "@/pages/error/404/NotFound.tsx";
 import ErrorPage from "@/pages/error/500/Error.tsx";
 import App from "@/App.tsx";
+import LoginIndex from "@/pages/auth/login";
 
 /**
  * 根据错误类型跳转到对应的页面
@@ -48,7 +49,7 @@ const Router = createBrowserRouter([
     },
     {
         path: "/login",
-        //Component: LoginIndex,
+        Component: LoginIndex,
     },
 
 ])
