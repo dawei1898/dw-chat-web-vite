@@ -10,6 +10,8 @@ npm create vite@latest dw-chat-web-vite
 安装 Tailwind CSS https://tailwindcss.com/docs/installation/using-vite
 ```bash
 npm install tailwindcss @tailwindcss/vite
+
+npm install tailwind-merge
 ```
 
 安装 Ant Design
