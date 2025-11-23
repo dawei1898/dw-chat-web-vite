@@ -27,6 +27,28 @@ npm install @ant-design/icons --save
 npm install @ant-design/x --save
 ```
 
+https://beta.reactrouter.com/start/data/installation
+安装 React Router
+```shell
+npm install react-router
+```
 
+Axios
+```shell
+npm install axios
+```
 
+ahooks
+```shell
+npm install ahooks
+```
 
+全局状态管理库 zustand
+```bash
+npm install zustand
+```
+
+雪花算法
+```shell
+npm install snowflake-uid --save
+```

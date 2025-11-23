@@ -1,4 +1,4 @@
-import {axioser} from "@/utils/httpUtil";
+import {axioser} from "@/utils/httpUtil.ts";
 import type { LoginParam, RegisterParam } from '@/types/user.type.ts'
 import type {ApiResponse} from "@/types";
 

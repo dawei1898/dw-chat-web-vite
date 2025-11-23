@@ -3,6 +3,9 @@ import NotFoundPage from "@/pages/error/404/NotFound.tsx";
 import ErrorPage from "@/pages/error/500/Error.tsx";
 import App from "@/App.tsx";
 import LoginIndex from "@/pages/auth/login";
+import HomeLayout from "@/pages/layout/HomeLayout.tsx";
+import ChatHome from "@/pages/chat/ChatHome.tsx";
+import ChatIndex from "@/pages/chat/ChatIndex.tsx";
 
 /**
  * 根据错误类型跳转到对应的页面
@@ -22,12 +25,17 @@ function GeneralErrorBoundary() {
 const Router = createBrowserRouter([
     {
         path: "/",
-        //Component: HomeLayout,
+        Component: HomeLayout,
         errorElement: <GeneralErrorBoundary/>,
-        //handle: {breadcrumb: "首页"},
         children: [
-
-
+            {
+                path: '',
+                Component: ChatHome,
+            },
+            {
+                path: 'chat/:chatId',
+                Component: ChatIndex,
+            }
         ]
     },
     {
