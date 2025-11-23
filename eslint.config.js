@@ -19,5 +19,19 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          allowUnusedLocals: true, // 忽略未使用的变量
+          allowUnusedParameters: true, // 忽略未使用的参数
+        }
+      ]
+    },
   },
 ])
