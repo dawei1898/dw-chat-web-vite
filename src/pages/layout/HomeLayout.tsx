@@ -53,11 +53,11 @@ const HomeLayout = () => {
                             <Outlet/>
                         </Layout.Content>
 
-                        <Layout.Footer style={{padding: '10px'}}>
+                        {/*<Layout.Footer style={{padding: '10px'}}>
                             <Flex justify='center' align='start'>
                                 <p> Powered by Ant Desgin </p>
                             </Flex>
-                        </Layout.Footer>
+                        </Layout.Footer>*/}
                     </Layout>
                 </Layout>
             </Layout>

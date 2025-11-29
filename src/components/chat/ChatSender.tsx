@@ -47,13 +47,14 @@ const ChatSender = () => {
     };
 
     return (
-        <div className='w-full '>
+        <>
             {contextHolder}
             <Sender
-                className='max-w-xl mx-auto '
+                className='w-full max-w-md mx-auto'
                 styles={{
                     root: {
-                        borderRadius: '20px'
+                        borderRadius: '20px',
+
                     },
                 }}
                 ref={senderRef}
@@ -152,7 +153,7 @@ const ChatSender = () => {
 
 
             />
-        </div>
+        </>
     );
 };
 
