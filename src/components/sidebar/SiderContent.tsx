@@ -3,6 +3,7 @@ import {Conversations, type ConversationsProps} from "@ant-design/x";
 import type {GetProp} from "antd";
 import {CodeOutlined, FileImageOutlined, FileSearchOutlined} from "@ant-design/icons";
 import KeyCode from 'rc-util/lib/KeyCode';
+import {useAppChat} from "@/provider/AppChatProvider.tsx";
 
 
 
@@ -37,6 +38,7 @@ const defaultItems: GetProp<ConversationsProps, 'items'> = Array.from({length: 1
 
 const SiderContent = () => {
 
+    const { collapsed } = useAppChat();
     const [historicalItems, setHistoricalItems] = useState<GetProp<ConversationsProps, 'items'>>(defaultItems);
 
     const newChatClick = () => {
@@ -57,7 +59,7 @@ const SiderContent = () => {
             <Conversations
                 styles={{
                     root: {
-                        height: '300px',
+                        height: '350px',
                         marginBottom: '-40px',
                     },
                     creation: {
@@ -66,26 +68,30 @@ const SiderContent = () => {
                 }}
                 creation={{
                     align: 'center',
-                    label: '新会话',
+                    label: collapsed ? <></> : '新会话',
                     onClick: newChatClick,
                 }}
                 items={agentItems}
                 shortcutKeys={{
-                    creation: ['Meta', KeyCode.K],  // 不生效
+                    creation: ['Meta', KeyCode.K],
+                    items: ['Alt', 'number'],
                 }}
             />
-            <div id="scrollableDiv" className='overflow-scroll scrollbar-container'>
-                <Conversations
-                    style={{marginBottom: '-10px'}}
-                    items={historicalItems}
-                    defaultActiveKey="item1"
-                    groupable
-                    onActiveChange={(value) => {
-                        console.log("active:", value)
+            {!collapsed && (
+                <div id="scrollableDiv" className='h-full overflow-scroll scrollbar-container'>
+                    <Conversations
+                        style={{
+                            marginBottom: '-10px',
                     }}
-                />
-            </div>
-
+                        items={historicalItems}
+                        defaultActiveKey="item1"
+                        groupable
+                        onActiveChange={(value) => {
+                            console.log("active:", value)
+                        }}
+                    />
+                </div>
+            )}
         </>
     );
 };
