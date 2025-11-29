@@ -9,7 +9,7 @@ import AppChatProvider from "@/provider/AppChatProvider.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <ThemeProvider>
+        <ThemeProvider defaultTheme='light' storageKey='theme'>
             <AuthProvider>
                 <AppChatProvider>
                     <RouterProvider router={router}/>

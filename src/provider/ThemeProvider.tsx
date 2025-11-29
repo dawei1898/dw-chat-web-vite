@@ -1,12 +1,14 @@
 import React, {
-    createContext, type ReactNode, useContext, useEffect
+    createContext, useContext, useEffect, useState
 } from 'react';
-import {
-    type ThemeAction, type ThemeState, useThemeStore
-} from "@/stores/themeStore.ts";
 
 
-interface ThemeContextType extends ThemeState, ThemeAction {
+export type Theme = 'dark' | 'light'
+
+interface ThemeContextType  {
+    theme: Theme;
+    dark: boolean;
+    toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -20,18 +22,28 @@ export const useTheme = () => {
     return content;
 }
 
+type ThemeProviderProps = {
+    children: React.ReactNode
+    defaultTheme?: Theme
+    storageKey?: string
+}
 
 /**
- * 主题 Provider
+ * 主题切换 Provider
  *
  * @param children
+ * @param defaultTheme
+ * @param storageKey
+ * @param props
  * @constructor
  */
 export const ThemeProvider = (
-    {children}: { children: ReactNode }
+    {children, defaultTheme = "light", storageKey = "theme", ...props}: ThemeProviderProps
 ) => {
 
-    const {theme, dark, toggleTheme} = useThemeStore();
+    const [theme, setTheme] = useState<Theme>(
+        () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
+    )
 
 
     useEffect(() => {
@@ -42,10 +54,18 @@ export const ThemeProvider = (
         root.classList.add(theme)
     }, [theme])
 
-    const value = {theme, dark, toggleTheme}
+    const value = {
+        theme,
+        dark: theme === 'dark',
+        toggleTheme: () => {
+            const newTheme = theme === 'light' ? 'dark' : 'light';
+            localStorage.setItem(storageKey, newTheme)
+            setTheme(newTheme)
+        }
+    }
 
     return (
-        <ThemeContext.Provider value={value}>
+        <ThemeContext.Provider {...props} value={value}>
             {children}
         </ThemeContext.Provider>
     );
