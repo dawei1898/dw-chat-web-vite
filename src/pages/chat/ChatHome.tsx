@@ -1,5 +1,6 @@
 import React from 'react';
 import SidebarTrigger from "@/components/sidebar/SidebarTrigger.tsx";
+import ChatSender from "@/components/chat/ChatSender.tsx";
 
 const ChatHome = () => {
 
@@ -10,8 +11,10 @@ const ChatHome = () => {
             <div className='fixed z-10 h-12 w-12'>
                 <SidebarTrigger/>
             </div>
-
-            <h3>对话首页</h3>
+            <div  className='h-lvh flex justify-center items-center p-4'>
+                {/* 发送框 */}
+                <ChatSender/>
+            </div>
         </div>
     );
 };

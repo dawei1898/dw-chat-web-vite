@@ -36,12 +36,6 @@ const HomeLayout = () => {
             locale={zhCN}
             theme={customTheme}
         >
-            {/*<div>
-                <h3>首页布局</h3>
-                <p>侧边栏</p>
-                <Outlet/>
-            </div>*/}
-
             <Layout className='h-lvh'>
                 <Layout>
                     {/* 侧边栏 */}
@@ -49,7 +43,12 @@ const HomeLayout = () => {
 
                     {/* 右侧页面 */}
                     <Layout>
-                        <Layout.Content className='h-full p-4 overflow-scroll'>
+                        <Layout.Content
+                            style={{
+                                backgroundColor: dark ? token.colorBgBlur
+                                    : token.colorBgContainer,
+                            }}
+                            className='h-full p-4 overflow-scroll'>
                             {/* 路由切入点 */}
                             <Outlet/>
                         </Layout.Content>
