@@ -50,7 +50,7 @@ const HomeLayout = () => {
                                 backgroundColor: dark ? token.colorBgBlur
                                     : token.colorBgContainer,
                             }}
-                            className='h-full p-4 overflow-scroll'>
+                            className='h-full overflow-y-scroll'>
                             {/* 路由切入点 */}
                             <Outlet/>
                         </Layout.Content>

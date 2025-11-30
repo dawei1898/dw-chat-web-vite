@@ -50,7 +50,7 @@ const ChatSender = () => {
         <>
             {contextHolder}
             <Sender
-                className='w-full max-w-md mx-auto'
+                className='w-full max-w-xl mx-auto'
                 styles={{
                     root: {
                         borderRadius: '20px',
