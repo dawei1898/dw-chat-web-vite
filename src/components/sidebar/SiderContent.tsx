@@ -1,9 +1,18 @@
 import React, {useState} from 'react';
-import {Conversations, type ConversationsProps} from "@ant-design/x";
-import type {GetProp} from "antd";
-import {CodeOutlined, FileImageOutlined, FileSearchOutlined} from "@ant-design/icons";
+import {type GetProp, message} from "antd";
+import {
+    CodeOutlined, DeleteOutlined, EditOutlined,
+    FileImageOutlined,
+    FileSearchOutlined
+} from "@ant-design/icons";
+import {
+    type ConversationItemType,
+    Conversations,
+    type ConversationsProps
+} from "@ant-design/x";
 import KeyCode from 'rc-util/lib/KeyCode';
 import {useAppChat} from "@/provider/AppChatProvider.tsx";
+import {useXConversations} from "@ant-design/x-sdk";
 
 
 
@@ -27,32 +36,72 @@ const agentItems: GetProp<ConversationsProps, 'items'> = [
 ];
 
 
-const defaultItems: GetProp<ConversationsProps, 'items'> = Array.from({length: 15}).map((_, index) => ({
+const items: ConversationItemType[] = Array.from({ length: 5 }).map((_, index) => ({
     key: `item${index + 1}`,
     label:
-        index === 0
-            ? "This's Conversation Item 1, you can click me!"
+        index + 1 === 3
+            ? "This's Conversation Item 3, you can click me!"
             : `Conversation Item ${index + 1}`,
     group: index < 3 ? 'Today' : 'Yesterday',
+    disabled: index === 3,
 }));
+
+let idx = 16;
 
 const SiderContent = () => {
 
     const { collapsed } = useAppChat();
-    const [historicalItems, setHistoricalItems] = useState<GetProp<ConversationsProps, 'items'>>(defaultItems);
+    const {
+        conversations,
+        setConversations,
+        setConversation,
+        getConversation,
+        addConversation,
+        removeConversation,
+        activeConversationKey,
+        setActiveConversationKey,
+    } = useXConversations({
+        defaultConversations: items,
+        defaultActiveConversationKey: items[0]?.key,
+    });
 
-    const newChatClick = () => {
-        setHistoricalItems((ori) => {
-            return [
-                ...ori,
-                {
-                    key: `item${ori.length + 1}`,
-                    label: `Conversation Item ${ori.length + 1}`,
-                    group: 'Today',
-                },
-            ];
+
+    const onAdd = () => {
+        addConversation({ key: `item${idx}`, label: `Conversation Item ${idx}` });
+        idx = idx + 1;
+    };
+
+    const onUpdate = () => {
+        setConversation(activeConversationKey, {
+            key: activeConversationKey,
+            label: 'Updated Conversation Item',
         });
     };
+
+    const onReset = () => {
+        setConversations(items);
+        setActiveConversationKey('item1');
+    };
+
+    const menuConfig: ConversationsProps['menu'] = (conversation) => ({
+        items: [
+            {
+                key: 'edit',
+                label: '编辑',
+                icon: <EditOutlined />,
+            },
+            {
+                key: 'delete',
+                label: '删除',
+                icon: <DeleteOutlined />,
+                danger: true,
+            },
+        ],
+        onClick: () => {
+            console.log('conversation:', conversation)
+            removeConversation(conversation.key);
+        },
+    });
 
     return (
         <>
@@ -69,7 +118,7 @@ const SiderContent = () => {
                 creation={{
                     align: 'center',
                     label: collapsed ? <></> : '新会话',
-                    onClick: newChatClick,
+                    onClick: onAdd,
                 }}
                 items={agentItems}
                 shortcutKeys={{
@@ -83,11 +132,14 @@ const SiderContent = () => {
                         style={{
                             marginBottom: '-10px',
                     }}
-                        items={historicalItems}
-                        defaultActiveKey="item1"
+                        items={conversations}
                         groupable
+                        menu={menuConfig}
+                        activeKey={activeConversationKey}
+
                         onActiveChange={(value) => {
                             console.log("active:", value)
+                            setActiveConversationKey(value)
                         }}
                     />
                 </div>
