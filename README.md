@@ -27,6 +27,8 @@ npm install @ant-design/icons --save
 安装 Ant Design X
 ```shell
 npm install @ant-design/x --save
+npm install @ant-design/x-markdown --save
+npm install @ant-design/x-sdk --save
 ```
 
 https://beta.reactrouter.com/start/data/installation

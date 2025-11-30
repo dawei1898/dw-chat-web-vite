@@ -3,21 +3,41 @@ import SidebarTrigger from "@/components/sidebar/SidebarTrigger.tsx";
 import ChatSender from "@/components/chat/ChatSender.tsx";
 import ChatMessages from "@/components/chat/ChatMessages.tsx";
 import {Actions, Bubble, type BubbleItemType, type BubbleListProps} from '@ant-design/x';
-import {AntDesignOutlined, CopyOutlined, RedoOutlined, UserOutlined} from "@ant-design/icons";
+import {
+    AntDesignOutlined,
+    CopyOutlined,
+    DislikeOutlined,
+    LikeOutlined,
+    RedoOutlined,
+    UserOutlined
+} from "@ant-design/icons";
 import {Avatar, type GetRef} from "antd";
 
 
 
-const actionItems = [
-    {
-        key: 'retry',
-        icon: <RedoOutlined />,
-        label: 'Retry',
-    },
+const actionItems = (content: string) =>[
     {
         key: 'copy',
         icon: <CopyOutlined />,
-        label: 'Copy',
+        label: '复制',
+        actionRender: () => {
+            return <Actions.Copy text={content} />;
+        },
+    },
+    {
+        key: 'like',
+        icon: <LikeOutlined/>,
+        label: '喜欢',
+    },
+    {
+        key: 'dislike',
+        icon: <DislikeOutlined/>,
+        label: '不喜欢',
+    },
+    {
+        key: 'retry',
+        icon: <RedoOutlined />,
+        label: '重新生成',
     },
 ];
 
@@ -72,7 +92,11 @@ const ChatIndex = () => {
                 typing: true,
                 header: 'AI',
                 avatar: () => <Avatar icon={<AntDesignOutlined />} />,
-                footer: (content) => <Actions items={actionItems} onClick={() => console.log(content)} />,
+                footer: (content) =>
+                    <Actions
+                        items={actionItems(content)}
+                        onClick={() => console.log(content)}
+                    />,
             },
             user: {
                 placement: 'end',

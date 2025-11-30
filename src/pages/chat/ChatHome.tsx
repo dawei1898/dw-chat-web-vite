@@ -1,6 +1,7 @@
 import React from 'react';
 import SidebarTrigger from "@/components/sidebar/SidebarTrigger.tsx";
 import ChatSender from "@/components/chat/ChatSender.tsx";
+import ChatMessages from "@/components/chat/ChatMessages.tsx";
 
 const ChatHome = () => {
 
@@ -12,6 +13,7 @@ const ChatHome = () => {
                 <SidebarTrigger/>
             </div>
             <div  className='h-lvh w-full flex flex-col justify-center items-center p-4'>
+                <ChatMessages/>
                 {/* 发送框 */}
                 <ChatSender/>
             </div>

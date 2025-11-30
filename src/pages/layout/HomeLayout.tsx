@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Outlet} from "react-router";
 import {XProvider} from "@ant-design/x";
+import zhCN_X from '@ant-design/x/locale/zh_CN';
 import zhCN from 'antd/locale/zh_CN';
 import {Flex, Layout, theme, type ThemeConfig} from "antd";
 import AppSider from "@/pages/layout/AppSider.tsx";
@@ -16,6 +17,7 @@ const HomeLayout = () => {
 
     const {token} = useToken();
     const {dark} = useTheme();
+    const [locale, setLocal] = useState({ ...zhCN, ...zhCN_X });
 
     // 主题配置
     const customTheme: ThemeConfig = {
@@ -33,7 +35,7 @@ const HomeLayout = () => {
 
     return (
         <XProvider
-            locale={zhCN}
+            locale={locale}
             theme={customTheme}
         >
             <Layout className='h-lvh'>
