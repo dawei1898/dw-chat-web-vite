@@ -17,7 +17,6 @@ const HomeLayout = () => {
 
     const {token} = useToken();
     const {dark} = useTheme();
-    const [locale, setLocal] = useState({ ...zhCN, ...zhCN_X });
 
     // 主题配置
     const customTheme: ThemeConfig = {
@@ -35,7 +34,7 @@ const HomeLayout = () => {
 
     return (
         <XProvider
-            locale={locale}
+            locale={{ ...zhCN, ...zhCN_X }}
             theme={customTheme}
         >
             <Layout className='h-lvh'>
