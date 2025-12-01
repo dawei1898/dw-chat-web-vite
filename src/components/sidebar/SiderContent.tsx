@@ -119,7 +119,6 @@ const SiderContent = () => {
         return {
             key: item.chatId,
             label: item.chatName,
-            updateTime: item.updateTime,
             group: group,
         }
     }

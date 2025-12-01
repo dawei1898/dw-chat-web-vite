@@ -82,6 +82,31 @@ export interface MessageVO {
   modelId?: string;
 }
 
+
+export type UserAgentMessage = {
+  type: 'user';
+  id: string;
+  content: string;
+  reasoningContent?: string;
+  chatId?: string;
+  openReasoning?: boolean;
+  openSearch?: boolean;
+};
+
+export type AIAgentMessage = {
+  type: 'ai';
+  id: string;
+  content: string;
+  reasoningContent?: string;
+  chatId?: string;
+  voteType?: 'up' | 'down' | '';
+  loading?: boolean;
+  openReasoning?: boolean;
+  openSearch?: boolean;
+};
+
+export type AgentMessage = UserAgentMessage | AIAgentMessage;
+
 /**
  * 点赞评论入参
  */

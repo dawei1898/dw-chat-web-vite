@@ -13,7 +13,7 @@ const ChatHome = () => {
                 <SidebarTrigger/>
             </div>
             <div  className='h-lvh w-full flex flex-col justify-center items-center p-4'>
-                <ChatMessage/>
+                {/*<ChatMessage/>*/}
                 {/* 发送框 */}
                 <ChatSender/>
             </div>

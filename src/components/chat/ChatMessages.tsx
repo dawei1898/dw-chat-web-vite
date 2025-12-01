@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Avatar, type GetRef, message, Skeleton, theme
 } from "antd";
@@ -23,6 +23,9 @@ import HighlightCode from '@ant-design/x-markdown/plugins/HighlightCode';
 import Latex from '@ant-design/x-markdown/plugins/Latex';
 import Mermaid from '@ant-design/x-markdown/plugins/Mermaid';
 import {useTheme} from "@/provider/ThemeProvider.tsx";
+import {useParams} from "react-router";
+import {queryMessageListAPI} from "@/apis/chat/chatApi.ts";
+import type {MessageInfo} from "@ant-design/x-sdk";
 
 const {useToken} = theme;
 
@@ -150,12 +153,49 @@ const ThinkComponent = React.memo((props: ComponentProps) => {
  * 消息列表
  */
 const ChatMessages = () => {
+
+    const { chatId } = useParams<{ chatId: string }>();
+    console.log('chatId：', chatId)
     const {token} = useToken();
     const [messageApi, contextHolder] = message.useMessage();
     const {dark} = useTheme();
     const [edit, setEdit] = useState(false)
     const listRef = React.useRef<GetRef<typeof Bubble.List>>(null);
-    const [messages, setMessages] = useState<BubbleItemType[]>(initMessages)
+    const [messages, setMessages] = useState<BubbleItemType[]>([])
+
+    useEffect(() => {
+        if (chatId) {
+            queryMessageList(chatId).then()
+        }
+    }, [chatId]);
+
+
+    /**
+     * 查询消息列表
+     */
+    const queryMessageList = async (conversationKey: string) => {
+        if (!conversationKey) {
+            return
+        }
+        const resp = await queryMessageListAPI(conversationKey)
+        // @ts-ignore
+        const msgs = resp.data.map((item) => ({
+            /*id: item.msgId,
+            status: item.type === 'user' ? 'local' : 'success',
+            message: {
+                type: item.type,
+                id: item.msgId,
+                content: item.content,
+                reasoningContent: item.reasoningContent,
+                chatId: item.chatId,
+                voteType: item.voteType,
+            }*/
+            key: item.msgId,
+            role: item.type,
+            content: item.content,
+        }))
+        setMessages(msgs)
+    }
 
 
     const roles: BubbleListProps['role'] = {
