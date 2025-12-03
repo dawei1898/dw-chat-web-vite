@@ -6,6 +6,7 @@ import LoginIndex from "@/pages/auth/login";
 import HomeLayout from "@/pages/layout/HomeLayout.tsx";
 import ChatHome from "@/pages/chat/ChatHome.tsx";
 import ChatIndex from "@/pages/chat/ChatIndex.tsx";
+import TestPage from "@/pages/test/TestPage.tsx";
 
 /**
  * 根据错误类型跳转到对应的页面
@@ -59,7 +60,10 @@ const Router = createBrowserRouter([
         path: "/login",
         Component: LoginIndex,
     },
-
+    {
+        path: "/test",
+        Component: TestPage,
+    },
 ])
 
 export default Router
