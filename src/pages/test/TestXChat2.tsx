@@ -74,6 +74,7 @@ class CustomChatProvider<
     transformMessage(info: TransformMessage<ChatMessage, MessageVO>): ChatMessage {
         const {originMessage, chunk} = info;
         try {
+            // @ts-ignore
             const data: MessageVO = JSON.parse(chunk?.data)
             const agentMessage = {
                 role: 'ai',
