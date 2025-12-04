@@ -5,11 +5,26 @@ import {CloudUploadOutlined, GlobalOutlined, NodeIndexOutlined, PaperClipOutline
 
 const {useToken} = theme;
 
+interface ChatSenderProps {
+    chatId?: string;
+    onRequest: (content: string, openReasoning: boolean, openSearch: boolean) => void;
+    onStop: () => void;
+    isRequesting: boolean;
+}
+
 
 /**
  * 对话发送框
  */
-const ChatSender = () => {
+const ChatSender = (
+    {
+        chatId,
+        onRequest,
+        onStop,
+        isRequesting,
+
+    }: ChatSenderProps
+) => {
 
     const {token} = useToken();
     const [messageApi, contextHolder] = message.useMessage();
@@ -30,13 +45,17 @@ const ChatSender = () => {
         setFiles([])
 
         setTimeout(() => {
+            onRequest(context, openReasoning, openSearch)
 
             messageApi.success('发送成功:' + context)
             setLoading(false)
-        }, 2000)
+        }, 500)
     }
 
+
+
     const handleStop = () => {
+        onStop()
         messageApi.warning('停止发送')
         setLoading(false)
     }
@@ -54,7 +73,6 @@ const ChatSender = () => {
                 styles={{
                     root: {
                         borderRadius: '20px',
-
                     },
                 }}
                 ref={senderRef}
@@ -63,7 +81,7 @@ const ChatSender = () => {
                     minRows: 2,
                     maxRows: 6,
                 }}
-                loading={loading}
+                loading={isRequesting}
                 //disabled={loading}
                 value={input}
                 onChange={setInput}
@@ -89,7 +107,7 @@ const ChatSender = () => {
                             onChange={(info) => setFiles(info.fileList)}
                             beforeUpload={() => false}
                             placeholder={{
-                                icon:<CloudUploadOutlined style={{fontSize: 18}}/>,
+                                icon: <CloudUploadOutlined style={{fontSize: 18}}/>,
                                 description: '上传附件'
                             }}
                             getDropContainer={() => senderRef.current?.nativeElement}

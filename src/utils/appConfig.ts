@@ -4,4 +4,5 @@
  */
 export const appConfig = {
   appName: import.meta.env.VITE_APP_NAME,
+  apiStreamChatUrl: import.meta.env.VITE_API_STREAM_CHAT_URL,
 }

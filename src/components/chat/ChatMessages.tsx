@@ -23,9 +23,7 @@ import HighlightCode from '@ant-design/x-markdown/plugins/HighlightCode';
 import Latex from '@ant-design/x-markdown/plugins/Latex';
 import Mermaid from '@ant-design/x-markdown/plugins/Mermaid';
 import {useTheme} from "@/provider/ThemeProvider.tsx";
-import {useParams} from "react-router";
-import {queryMessageListAPI} from "@/apis/chat/chatApi.ts";
-import type {MessageInfo} from "@ant-design/x-sdk";
+import {DeepSeekIcon} from "@/components/icon/Icons.tsx";
 
 const {useToken} = theme;
 
@@ -120,6 +118,10 @@ This mode of thinking helps individuals avoid cognitive biases in complex scenar
 
 ]
 
+
+
+
+
 /**
  * 思考组件
  */
@@ -129,10 +131,12 @@ const ThinkComponent = React.memo((props: ComponentProps) => {
     const [expand, setExpand] = React.useState(true);
 
     React.useEffect(() => {
+        console.log('streamStatus:', props.streamStatus)
+
         if (props.streamStatus === 'done') {
-            setTitle('已思考（10秒）');
+            setTitle('已思考完成');
             setLoading(false);
-            setExpand(false);
+            setExpand(true);
         }
     }, [props.streamStatus]);
 
@@ -149,110 +153,101 @@ const ThinkComponent = React.memo((props: ComponentProps) => {
 });
 
 
+interface ChatMessagesProps {
+    messages: BubbleItemType[];
+}
+
+
 /**
  * 消息列表
  */
-const ChatMessages = () => {
+const ChatMessages = (
+    {messages = []}: ChatMessagesProps
+) => {
 
-    const { chatId } = useParams<{ chatId: string }>();
-    console.log('chatId：', chatId)
     const {token} = useToken();
     const [messageApi, contextHolder] = message.useMessage();
     const {dark} = useTheme();
+
     const [edit, setEdit] = useState(false)
     const listRef = React.useRef<GetRef<typeof Bubble.List>>(null);
-    const [messages, setMessages] = useState<BubbleItemType[]>([])
 
-    useEffect(() => {
-        if (chatId) {
-            queryMessageList(chatId).then()
-        }
-    }, [chatId]);
-
-
-    /**
-     * 查询消息列表
-     */
-    const queryMessageList = async (conversationKey: string) => {
-        if (!conversationKey) {
-            return
-        }
-        const resp = await queryMessageListAPI(conversationKey)
-        // @ts-ignore
-        const msgs = resp.data.map((item) => ({
-            /*id: item.msgId,
-            status: item.type === 'user' ? 'local' : 'success',
-            message: {
-                type: item.type,
-                id: item.msgId,
-                content: item.content,
-                reasoningContent: item.reasoningContent,
-                chatId: item.chatId,
-                voteType: item.voteType,
-            }*/
-            key: item.msgId,
-            role: item.type,
-            content: item.content,
-        }))
-        setMessages(msgs)
-    }
 
 
     const roles: BubbleListProps['role'] = {
-        user: {
-            placement: 'end',
-            typing: false,
-            shape: 'round',
-            footer: (content) => (
-                <Actions
-                    items={userActionItems(content)}
-                    onClick={handleActionClick}
-                />
-            ),
-            editable: edit,
-            onEditCancel: () => {
-                setEdit(false)
-                message.success('取消编辑');
-            },
-            onEditConfirm: (value) => {
-                setEdit(false)
-                message.success('确认编辑：' + value);
-            },
+        user: (data: BubbleItemType) => {
+            const isLastMessage = false;
+
+            return {
+                placement: 'end',
+                typing: false,
+                shape: 'round',
+                /*footer: (content) => (
+                    <Actions
+                        items={userActionItems(content)}
+                        onClick={handleActionClick}
+                    />
+                ),*/
+                editable: edit,
+                onEditCancel: () => {
+                    setEdit(false)
+                    message.success('取消编辑');
+                },
+                onEditConfirm: (value) => {
+                    setEdit(false)
+                    message.success('确认编辑：' + value);
+                },
+            }
         },
-        ai: {
-            placement: 'start',
-            shape: 'round',
-            variant: 'borderless',
-            avatar: () => <Avatar icon={<AntDesignOutlined/>}/>,
-            //header: (<h3>Markdown</h3>),
-            typing: {effect: 'fade-in'},
-            contentRender: (content) => (
-                <XMarkdown
-                    className={dark ? "x-markdown-dark" : "x-markdown-light"}
-                    content={content}
-                    openLinksInNewTab
-                    paragraphTag="div"
-                    config={{ extensions: Latex() }}
-                    streaming={{
-                        hasNextChunk: false,
-                        enableAnimation: true,
-                        animationConfig: {
-                            fadeDuration: 500,
-                        },
-                        incompleteMarkdownComponentMap: {
-                            link: 'loading-link',
-                            image: 'loading-image',
-                        },
-                    }}
-                    components={LoadingComponents}
-                />
-            ),
-            footer: (content) => (
-                <Actions
-                    items={aiActionItems(content)}
-                    onClick={handleActionClick}
-                />
-            ),
+        ai: (data: BubbleItemType) => {
+            const loading = data.status !== 'success';
+
+            return {
+                placement: 'start',
+                shape: 'round',
+                variant: 'borderless',
+                avatar: () => (
+                    <Avatar
+                        icon={<DeepSeekIcon />}
+                        style={{border: '1px solid #c5eaee', backgroundColor: token.colorBgBlur}}
+                    />
+                ),
+                //header: (<h3>Markdown</h3>),
+                typing: {effect: 'fade-in'},
+                contentRender: (content) => (
+                    <XMarkdown
+                        className={dark ? "x-markdown-dark" : "x-markdown-light"}
+                        content={content}
+                        openLinksInNewTab
+                        //paragraphTag="div"
+                        config={{extensions: Latex()}}
+                        streaming={{
+                            hasNextChunk: loading,
+                            enableAnimation: true,
+                            animationConfig: {
+                                fadeDuration: 500,
+                            },
+                            incompleteMarkdownComponentMap: {
+                                link: 'loading-link',
+                                image: 'loading-image',
+                                table: 'loading-table',
+                                html: 'loading-html',
+                            },
+                        }}
+                        components={LoadingComponents}
+                    />
+                ),
+
+                footer: (content) => {
+                    if (loading) return null;
+                    return (
+                        <Actions
+                            items={aiActionItems(content)}
+                            onClick={handleActionClick}
+                        />
+                    )
+                },
+            }
         },
     }
 

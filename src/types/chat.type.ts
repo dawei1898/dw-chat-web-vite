@@ -85,7 +85,7 @@ export interface MessageVO {
 
 
 export type UserAgentMessage = {
-  type: 'user';
+  role: 'user';
   id: string;
   content: string;
   reasoningContent?: string;
@@ -95,7 +95,7 @@ export type UserAgentMessage = {
 };
 
 export type AIAgentMessage = {
-  type: 'ai';
+  role: 'ai';
   id: string;
   content: string;
   reasoningContent?: string;
