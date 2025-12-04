@@ -80,6 +80,7 @@ export interface MessageVO {
   reasoningContent?: string;
   voteType?: string;
   modelId?: string;
+  finished?: boolean;
 }
 
 
