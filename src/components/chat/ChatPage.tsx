@@ -132,7 +132,7 @@ const ChatPage = (
 
     const finalMessages: BubbleItemType[] = messages.map(({id, status, message}) => {
         //console.log('message:', JSON.stringify(messages))
-        const content = (message.reasoningContent ? `<think>${message.reasoningContent}</think>` : '')
+        const content = (message.reasoningContent ? `<think>${message.reasoningContent?.replaceAll('\n', '\t')}</think>` : '')
             + (message.content || '')
 
         return ({

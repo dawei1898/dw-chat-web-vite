@@ -106,7 +106,7 @@ const LoginForm = () => {
                                 <Input.Password
                                     prefix={<LockOutlined/>}
                                     size='large'
-                                    placeholder='密码： 123456'
+                                    placeholder='密码：123456'
                                 />
                             </Form.Item>
 

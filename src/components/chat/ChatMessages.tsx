@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import {
     Avatar, type GetRef, message, Skeleton, theme
 } from "antd";
@@ -163,12 +163,13 @@ interface ChatMessagesProps {
 /**
  * 消息列表
  */
-const ChatMessages = (
+const ChatMessages =  (
     {
         messages = [],
         onLike,
         onDislike,
     }: ChatMessagesProps
+
 ) => {
 
     //console.log('ChatMessages messages:', messages)
@@ -225,7 +226,7 @@ const ChatMessages = (
                         className={dark ? "x-markdown-dark" : "x-markdown-light"}
                         content={content}
                         openLinksInNewTab
-                        //paragraphTag="div"
+                        paragraphTag="div"
                         config={{extensions: Latex()}}
                         streaming={{
                             hasNextChunk: loading,
@@ -361,16 +362,44 @@ const ChatMessages = (
     }
 
 
+    // 滑动到顶部
+    const scrollToTop = () => {
+        listRef.current?.scrollTo({ top: 'top' })
+    }
+
+    // 滑动到底部
+    const scrollToBottom = () => {
+        listRef.current?.scrollTo({behavior: 'smooth' })
+    }
+
+    // 滑动到最后一条顶部
+    const scrollToLastTop = () => {
+        listRef.current?.scrollTo({ key: messages[messages.length - 1].key, block: 'start' })
+    }
+
+
+
     return (
         <>
+            {/*<div className='flex gap-4 max-w-2xl mx-auto px-4'>
+                <Button onClick={scrollToTop}>
+                    Scroll To Top
+                </Button>
+                <Button onClick={scrollToBottom}>
+                    Scroll To Bottom
+                </Button>
+                <Button onClick={scrollToLastTop}>
+                    Scroll To lastTop
+                </Button>
+            </div>*/}
             <Bubble.List
                 className='max-w-2xl mx-auto px-4'
-                ref={listRef}
+                //ref={listRef}
                 items={messages}
                 role={roles}
-                onScroll={(e) => {
+                /*onScroll={(e) => {
                     console.log('scroll:', (e.target as HTMLDivElement).scrollTop);
-                }}
+                }}*/
             />
         </>
     );
