@@ -29,7 +29,7 @@ const ChatSender = (
     const {token} = useToken();
     const [messageApi, contextHolder] = message.useMessage();
     const senderRef = React.useRef<GetRef<typeof Sender>>(null);
-    const [input, setInput] = useState<string>('')
+    const [inputTxt, setInputTxt] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [openAttachment, setOpenAttachment] = useState<boolean>(false)
     const [openSearch, setOpenSearch] = useState(false);
@@ -41,15 +41,14 @@ const ChatSender = (
     const handleSend = (context: string) => {
         setLoading(true)
 
-        setInput('')
+        setInputTxt('')
         setFiles([])
 
-        setTimeout(() => {
-            onRequest(context, openReasoning, openSearch)
+        onRequest(context, openReasoning, openSearch)
 
-            messageApi.success('发送成功:' + context)
-            setLoading(false)
-        }, 500)
+        //messageApi.success('发送成功:' + context)
+        setLoading(false)
+
     }
 
 
@@ -59,11 +58,6 @@ const ChatSender = (
         messageApi.warning('停止发送')
         setLoading(false)
     }
-
-    const iconStyle = {
-        fontSize: 18,
-        color: token.colorText,
-    };
 
     return (
         <>
@@ -83,8 +77,8 @@ const ChatSender = (
                 }}
                 loading={isRequesting}
                 //disabled={loading}
-                value={input}
-                onChange={setInput}
+                value={inputTxt}
+                onChange={setInputTxt}
                 allowSpeech
                 onSubmit={handleSend}
                 onCancel={handleStop}
@@ -148,7 +142,6 @@ const ChatSender = (
                                     }}
                                     icon={<GlobalOutlined/>}
                                 >
-
                                     联网搜索
                                 </Sender.Switch>
                             </Tooltip>
@@ -161,8 +154,17 @@ const ChatSender = (
                                 />
 
                                 {/* 发送、停止按钮 */}
-                                {!loading ? (<SendButton/>)
-                                    : (<LoadingButton/>)
+                                {!isRequesting ?
+                                    (
+                                        <Tooltip title={inputTxt ? '发送' : '请输入你的问题'} placement='top'>
+                                            <SendButton/>
+                                        </Tooltip>
+                                    )
+                                    : (
+                                        <Tooltip title={'停止'} placement='top'>
+                                            <LoadingButton/>
+                                        </Tooltip>
+                                    )
                                 }
                             </div>
                         </Flex>

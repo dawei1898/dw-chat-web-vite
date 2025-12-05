@@ -17,7 +17,7 @@ import {
 import {
     deleteChatAPI, queryChatPageAPI, saveChatAPI
 } from "@/apis/chat/chatApi.ts";
-import {useNavigate} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import type {ChatRecordVO} from "@/types/chat.type.ts";
 
 
@@ -46,6 +46,9 @@ const agentItems: GetProp<ConversationsProps, 'items'> = [
  */
 const SiderContent = () => {
 
+    const {chatId, setChatId} = useAppChat();
+    console.log('SiderContent chatId:', chatId)
+
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
     const {collapsed} = useAppChat();
@@ -63,10 +66,18 @@ const SiderContent = () => {
 
     useEffect(() => {
         //console.log('activeConversationKey:', activeConversationKey)
+        setChatId(activeConversationKey)
+
         if (activeConversationKey) {
             navigate(`/chat/${activeConversationKey}`)
+        } else {
+            initConversations()
         }
     }, [activeConversationKey]);
+
+    useEffect(() => {
+        setActiveConversationKey(chatId || '')
+    }, [chatId]);
 
 
     /**
@@ -125,7 +136,7 @@ const SiderContent = () => {
 
     // 点击添加会话
     const clickAddConversation = () => {
-        setActiveConversationKey('')
+        //setActiveConversationKey('')
         navigate('/')
     }
 

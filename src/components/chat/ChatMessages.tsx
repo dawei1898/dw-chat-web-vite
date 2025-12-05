@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState} from 'react';
 import {
     Avatar, type GetRef, message, Skeleton, theme
 } from "antd";
@@ -9,7 +9,6 @@ import {
     Think
 } from '@ant-design/x';
 import {
-    AntDesignOutlined,
     AudioOutlined,
     DislikeOutlined,
     EditOutlined,
@@ -24,6 +23,7 @@ import Latex from '@ant-design/x-markdown/plugins/Latex';
 import Mermaid from '@ant-design/x-markdown/plugins/Mermaid';
 import {useTheme} from "@/provider/ThemeProvider.tsx";
 import {DeepSeekIcon} from "@/components/icon/Icons.tsx";
+import type {VoteType} from "@/types/chat.type.ts";
 
 const {useToken} = theme;
 
@@ -155,6 +155,8 @@ const ThinkComponent = React.memo((props: ComponentProps) => {
 
 interface ChatMessagesProps {
     messages: BubbleItemType[];
+    onLike?: (msgId: string, voteType: VoteType) => void;
+    onDislike?: (msgId: string, voteType: VoteType) => void;
 }
 
 
@@ -162,8 +164,14 @@ interface ChatMessagesProps {
  * 消息列表
  */
 const ChatMessages = (
-    {messages = []}: ChatMessagesProps
+    {
+        messages = [],
+        onLike,
+        onDislike,
+    }: ChatMessagesProps
 ) => {
+
+    //console.log('ChatMessages messages:', messages)
 
     const {token} = useToken();
     const [messageApi, contextHolder] = message.useMessage();
@@ -171,8 +179,6 @@ const ChatMessages = (
 
     const [edit, setEdit] = useState(false)
     const listRef = React.useRef<GetRef<typeof Bubble.List>>(null);
-
-
 
     const roles: BubbleListProps['role'] = {
         user: (data: BubbleItemType) => {
@@ -243,7 +249,9 @@ const ChatMessages = (
                     return (
                         <Actions
                             items={aiActionItems(content)}
-                            onClick={handleActionClick}
+                            onClick={(menuInfo) => {
+                                handleActionClick(menuInfo, data)
+                            }}
                         />
                     )
                 },
@@ -332,13 +340,17 @@ const ChatMessages = (
         },
     ];
 
-    const handleActionClick = (menuInfo: any) => {
+    const handleActionClick = (menuInfo: any, data: BubbleItemType) => {
         console.log('menuInfo:', menuInfo)
         if (menuInfo.key === 'like') {
-            message.success('喜欢');
+            if (onLike) {
+                onLike(data.key as string, data.extraInfo?.voteType)
+            }
         }
         if (menuInfo.key === 'dislike') {
-            message.success('不喜欢');
+            if (onDislike) {
+                onDislike(data.key as string, data.extraInfo?.voteType)
+            }
         }
         if (menuInfo.key === 'retry') {
             message.success('重新生成');

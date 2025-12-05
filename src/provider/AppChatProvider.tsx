@@ -4,6 +4,8 @@ import React, {createContext, useContext, useState} from 'react';
 interface AppChatProviderContextType {
     collapsed: boolean;
     setCollapsed: (value: boolean) => void;
+    chatId: string;
+    setChatId: (value: string) => void;
 }
 
 /**
@@ -35,11 +37,13 @@ const AppChatProvider = (
 ) => {
 
     const [collapsed, setCollapsed] = useState(false)
-
+    const [chatId, setChatId] = useState<string>('')
 
     const value = {
         collapsed: collapsed,
-        setCollapsed: setCollapsed
+        setCollapsed: setCollapsed,
+        chatId: chatId,
+        setChatId: setChatId,
     }
 
     return (

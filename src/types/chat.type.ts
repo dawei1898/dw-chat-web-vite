@@ -1,4 +1,6 @@
 import type { PageParam } from '@/types'
+import {DefaultChatProvider} from "@ant-design/x-sdk";
+import type {TransformMessage} from "@ant-design/x-sdk/es/x-chat/providers/AbstractChatProvider";
 
 
 export type VoteType = 'up' | 'down' | ''
@@ -92,6 +94,7 @@ export type UserAgentMessage = {
   chatId?: string;
   openReasoning?: boolean;
   openSearch?: boolean;
+  voteType?: VoteType;
 };
 
 export type AIAgentMessage = {
@@ -100,7 +103,7 @@ export type AIAgentMessage = {
   content: string;
   reasoningContent?: string;
   chatId?: string;
-  voteType?: 'up' | 'down' | '';
+  voteType?: VoteType;
   loading?: boolean;
   openReasoning?: boolean;
   openSearch?: boolean;
@@ -114,4 +117,49 @@ export type AgentMessage = UserAgentMessage | AIAgentMessage;
 export interface VoteParam {
   contentId: string;
   voteType: string;
+}
+
+
+
+export class CustomChatProvider<
+    ChatMessage extends AgentMessage = AgentMessage,
+    Input extends StreamChatParam = StreamChatParam,
+    Output extends MessageVO = MessageVO,
+> extends DefaultChatProvider<ChatMessage, Input, Output> {
+
+  /**
+   * 转换发送消息
+   */
+  transformLocalMessage(requestParams: Partial<StreamChatParam>): ChatMessage {
+    console.log('requestParams:', requestParams)
+    const userMessage = {
+      role: 'user',
+      id: Date.now().toString(),
+      content: requestParams.content,
+    } as ChatMessage
+    console.log('userMessage:', userMessage)
+    return userMessage as ChatMessage;
+  }
+
+  /**
+   * 转换 AI 返回消息
+   */
+  transformMessage(info: TransformMessage<ChatMessage, MessageVO>): ChatMessage {
+    const {originMessage, chunk} = info;
+    try {
+      // @ts-ignore
+      const data: MessageVO = JSON.parse(chunk?.data)
+      const agentMessage = {
+        role: 'ai',
+        id: data.msgId,
+        loading: !data.finished,
+        reasoningContent: (originMessage?.reasoningContent || '') + (data.reasoningContent || ''),
+        content: (originMessage?.content || '') + (data.content || ''),
+      } as ChatMessage
+      return agentMessage
+    } catch (e) {
+      console.log('Failed to transformMessage:', e)
+    }
+    return originMessage as ChatMessage
+  }
 }
