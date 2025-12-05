@@ -17,8 +17,9 @@ import {
 import {
     deleteChatAPI, queryChatPageAPI, saveChatAPI
 } from "@/apis/chat/chatApi.ts";
-import {useNavigate, useParams} from "react-router";
+import {useLocation, useNavigate, useParams} from "react-router";
 import type {ChatRecordVO} from "@/types/chat.type.ts";
+import {useRequest} from "ahooks";
 
 
 const agentItems: GetProp<ConversationsProps, 'items'> = [
@@ -46,9 +47,11 @@ const agentItems: GetProp<ConversationsProps, 'items'> = [
  */
 const SiderContent = () => {
 
-    const {chatId, setChatId} = useAppChat();
+    const { chatId } = useParams<{ chatId: string }>();
     console.log('SiderContent chatId:', chatId)
-
+    const location = useLocation();
+    // 获取当前路径
+    const pathname = location.pathname;
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
     const {collapsed} = useAppChat();
@@ -61,23 +64,20 @@ const SiderContent = () => {
     } = useXConversations({});
 
     useEffect(() => {
-        initConversations();
-    }, []);
+        if (chatId !== activeConversationKey) {
+            initConversationsRun();
+        }
+        if (!chatId) {
+            setActiveConversationKey('')
+        }
+    }, [pathname]);
 
     useEffect(() => {
         //console.log('activeConversationKey:', activeConversationKey)
-        setChatId(activeConversationKey)
-
         if (activeConversationKey) {
             navigate(`/chat/${activeConversationKey}`)
-        } else {
-            initConversations()
         }
     }, [activeConversationKey]);
-
-    useEffect(() => {
-        setActiveConversationKey(chatId || '')
-    }, [chatId]);
 
 
     /**
@@ -103,6 +103,8 @@ const SiderContent = () => {
             messageApi.error(e.message)
         }
     }
+
+    const { loading , run: initConversationsRun } = useRequest( initConversations, {manual: true});
 
     /**
      * 转换对话，根据更新时间分组
@@ -136,7 +138,6 @@ const SiderContent = () => {
 
     // 点击添加会话
     const clickAddConversation = () => {
-        //setActiveConversationKey('')
         navigate('/')
     }
 
@@ -149,7 +150,8 @@ const SiderContent = () => {
             chatName: label,
         })
         if (resp.code == 200) {
-            await initConversations()
+            //await initConversations()
+            initConversationsRun()
         } else {
             messageApi.error(resp.message)
         }
@@ -162,7 +164,7 @@ const SiderContent = () => {
         if (conversationKey) {
             const resp = await deleteChatAPI(conversationKey)
             if (resp.code == 200) {
-                await initConversations()
+                navigate('/')
             } else {
                 messageApi.error(resp.message)
             }

@@ -15,7 +15,8 @@ import ChatMessages from "@/components/chat/ChatMessages.tsx";
 import ChatSender from "@/components/chat/ChatSender.tsx";
 import type {LoginUser} from "@/types/user.type.ts";
 import Welcome from "@/components/chat/Welcome.tsx";
-import {useAppChat} from "@/provider/AppChatProvider.tsx";
+import {useLocation} from "react-router";
+import {useRequest} from "ahooks";
 
 interface ChatPageProps {
     user: LoginUser | null,
@@ -30,34 +31,35 @@ const ChatPage = (
 ) => {
 
     const [messageApi, contextHolder] = message.useMessage();
-    const { chatId, setChatId } = useAppChat();
-    const [loading, setLoading] = useState<boolean>(false);
+    const [chatId, setChatId] = useState<string>(props.chatId || '');
+    const location = useLocation();
+    // 获取当前路径
+    const pathname = location.pathname;
+
     console.log('ChatPage props.chatId: ', props.chatId)
-    console.log('ChatPage chatId: ', chatId)
 
     useEffect(() => {
-        if (props.chatId !== chatId) {
-            setChatId(props.chatId || '');
+        if (pathname === '/') {
+            setChatId('')
         }
-    }, [props.chatId, chatId]);
+    }, [pathname]);
 
     useEffect(() => {
-        if (chatId) {
-            queryMessageList(chatId).then()
+        if (props.chatId) {
+            queryMessageListRun(props.chatId)
+            console.log('useEffect props.chatId Messages:', messages)
         }
-    }, [chatId]);
+    }, [props.chatId])
 
 
     /**
      * 查询消息列表
      */
     const queryMessageList = async (conversationKey: string) => {
-        if (!conversationKey || loading) {
+        if (!conversationKey) {
             return;
         }
-
         try {
-            setLoading(true);
             const resp = await queryMessageListAPI(conversationKey)
             // @ts-ignore
             const msgs: MessageInfo<AgentMessage>[] = resp.data.map((item) => ({
@@ -75,10 +77,11 @@ const ChatPage = (
             setMessages(msgs)
         } catch (e) {
             console.log('Failed to queryMessageList.', e)
-        } finally {
-            setLoading(false)
         }
     }
+
+    const { loading , run: queryMessageListRun } = useRequest( queryMessageList, { throttleWait: 100,manual: true});
+
 
     const [provider] = React.useState(
         new CustomChatProvider<AgentMessage, StreamChatParam, MessageVO>({
@@ -146,16 +149,12 @@ const ChatPage = (
         })
     })
 
+    console.log('finalMessages:', finalMessages)
+
 
     const handleSubmit = async (content: string, openReasoning: boolean, openSearch: boolean) => {
         let id: string | undefined  = chatId;
         if (!id) {
-            // 添加加载状态防止重复提交
-            if (loading) return;
-
-            setLoading(true);
-
-            try {
                 id = await addConversation(content);
                 if (id) {
                     console.log('新增会话成功, chatId:', id)
@@ -171,9 +170,6 @@ const ChatPage = (
                         });
                     }, 500)
                 }
-            } finally {
-                setLoading(false);
-            }
 
         } else {
             onRequest({

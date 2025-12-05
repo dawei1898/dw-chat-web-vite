@@ -172,7 +172,7 @@ const ChatMessages =  (
 
 ) => {
 
-    //console.log('ChatMessages messages:', messages)
+    console.log('ChatMessages messages:', messages)
 
     const {token} = useToken();
     const [messageApi, contextHolder] = message.useMessage();
