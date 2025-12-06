@@ -74,9 +74,10 @@ const ChatPage = (
                     voteType: item.voteType,
                 }
             }))
+            console.log('queryMessageList msgs:', msgs)
             setMessages(msgs)
         } catch (e) {
-            console.log('Failed to queryMessageList.', e)
+            console.error('Failed to queryMessageList.', e)
         }
     }
 
@@ -133,21 +134,22 @@ const ChatPage = (
     });
 
 
-    const finalMessages: BubbleItemType[] = messages.map(({id, status, message}) => {
-        //console.log('message:', JSON.stringify(messages))
-        const content = (message.reasoningContent ? `<think>${message.reasoningContent?.replaceAll('\n', '\t')}</think>` : '')
-            + (message.content || '')
+    const finalMessages: BubbleItemType[] = React.useMemo(() => {
+        return messages.map(({id, status, message}) => {
+            const content = (message.reasoningContent ? `<think>${message.reasoningContent?.replaceAll('\n', '\t')}</think>` : '')
+                + (message.content || '')
 
-        return ({
-            key: message.id,
-            role: message.role,
-            status: status,
-            content: content,
-            extraInfo: {
-                voteType: message.voteType
-            }
+            return ({
+                key: message.id,
+                role: message.role,
+                status: status,
+                content: content,
+                extraInfo: {
+                    voteType: message.voteType
+                }
+            })
         })
-    })
+    }, [messages])
 
     console.log('finalMessages:', finalMessages)
 

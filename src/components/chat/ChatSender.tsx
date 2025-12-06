@@ -126,7 +126,7 @@ const ChatSender = (
                                     value={openReasoning}
                                     onChange={(value) => {
                                         setOpenReasoning(value)
-                                        messageApi.success(value ? '已开启深度思考' : '已关闭深度思考')
+                                        //messageApi.success(value ? '已开启深度思考' : '已关闭深度思考')
                                     }}
                                 >
                                     <NodeIndexOutlined/>
@@ -138,7 +138,7 @@ const ChatSender = (
                                     value={openSearch}
                                     onChange={(value) => {
                                         setOpenSearch(value)
-                                        messageApi.success(value ? '已开启联网搜索' : '已关闭联网搜索')
+                                        //messageApi.success(value ? '已开启联网搜索' : '已关闭联网搜索')
                                     }}
                                     icon={<GlobalOutlined/>}
                                 >
